@@ -31,9 +31,8 @@ function register(req, res) {
 }
 
 function login(req, res) {
-    var username = req.body.email.toLowerCase();
+    var username = req.body.username.toLowerCase();
     var password = req.body.password;
-
     if(username && password) {
         User.findOne({
             $or: [
@@ -49,6 +48,8 @@ function login(req, res) {
             //   Comprobación del password    //
             ////////////////////////////////////
             bcrypt.compare(password, user.password, (err, result) => {
+                // console.log('entra al bcryp')
+                
                 if(result) {
                     user.password = undefined; //remove pass from User response
                     ///////////////////////////////
@@ -64,7 +65,10 @@ function login(req, res) {
                     }).catch(err => {
                         return res.status(500).send({ ok: false, message: 'Internal error JWT'});
                     });
+                } else {
+                    return res.status(404).send({ ok: false, message: 'Error en los datos ingresados'});
                 }
+                
             });
         });
     }
